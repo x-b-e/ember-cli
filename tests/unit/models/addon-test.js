@@ -662,9 +662,14 @@ describe('models/addon.js', function() {
         return [];
       };
 
-      addon._fileSystemInfo();
+      var fsInfo = addon._fileSystemInfo();
 
       expect(wasCalled).to.be.ok;
+      expect(fsInfo.addonTemplatesTreeInAddonTree).to.equal(false);
+    });
+
+    it('shows `addonTemplatesTreeInAddonTree` as true when treePaths[\'addon-templates\'] is not modified', function() {
+      expect(addon._fileSystemInfo().addonTemplatesTreeInAddonTree).to.equal(true);
     });
 
     it('hasPodTemplates when pod templates found', function() {
@@ -676,11 +681,7 @@ describe('models/addon.js', function() {
         ];
       };
 
-      expect(addon._fileSystemInfo()).to.deep.equal({
-        hasJSFiles: true,
-        hasTemplates: true,
-        hasPodTemplates: true
-      });
+      expect(addon._fileSystemInfo().hasPodTemplates).to.equal(true);
     });
 
     it('does not hasPodTemplates when no pod templates found', function() {
@@ -692,11 +693,7 @@ describe('models/addon.js', function() {
         ];
       };
 
-      expect(addon._fileSystemInfo()).to.deep.equal({
-        hasJSFiles: false,
-        hasTemplates: true,
-        hasPodTemplates: false
-      });
+      expect(addon._fileSystemInfo().hasPodTemplates).to.equal(false);
     });
 
     it('does not hasPodTemplates when no pod templates found (pod-like structure in `addon/templates/`)', function() {
@@ -709,11 +706,7 @@ describe('models/addon.js', function() {
         ];
       };
 
-      expect(addon._fileSystemInfo()).to.deep.equal({
-        hasJSFiles: false,
-        hasTemplates: true,
-        hasPodTemplates: false
-      });
+      expect(addon._fileSystemInfo().hasPodTemplates).to.equal(false);
     });
 
     it('does not hasTemplates when no templates found', function() {
@@ -726,11 +719,7 @@ describe('models/addon.js', function() {
         ];
       };
 
-      expect(addon._fileSystemInfo()).to.deep.equal({
-        hasJSFiles: true,
-        hasTemplates: false,
-        hasPodTemplates: false
-      });
+      expect(addon._fileSystemInfo().hasTemplates).to.equal(false);
     });
 
     it('does not hasJSFiles when none found', function() {
@@ -743,11 +732,7 @@ describe('models/addon.js', function() {
         ];
       };
 
-      expect(addon._fileSystemInfo()).to.deep.equal({
-        hasJSFiles: false,
-        hasTemplates: false,
-        hasPodTemplates: false
-      });
+      expect(addon._fileSystemInfo().hasJSFiles).to.equal(false);
     });
   });
 
