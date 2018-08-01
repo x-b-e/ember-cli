@@ -2,10 +2,16 @@
 
 const expect = require('chai').expect;
 const findAddonByName = require('../../../lib/utilities/find-addon-by-name');
+const td = require('testdouble');
+
+const trace = console.trace;
+const warn = console.warn;
 
 describe('findAddonByName', function() {
   let addons;
+
   beforeEach(function() {
+    findAddonByName._RESET_ALREADY_EMITTED_DETAILS();
     addons = [{
       name: 'foo',
       pkg: { name: 'foo' },
@@ -24,6 +30,14 @@ describe('findAddonByName', function() {
       name: '@scoped/other',
       pkg: { name: '@scoped/other' },
     }];
+
+    console.trace = td.func('fake trace');
+    console.warn = td.func('fake warn');
+  });
+
+  afterEach(function() {
+    console.trace = trace;
+    console.warn = warn;
   });
 
   it('should return the foo addon from name', function() {
@@ -64,6 +78,13 @@ describe('findAddonByName', function() {
   it('matches unscoped name of scoped package when no exact match is found', function() {
     let addon = findAddonByName(addons, 'other');
     expect(addon.pkg.name).to.equal('@scoped/other');
+    td.verify(console.trace("Finding a scoped addon via its unscoped name is deprecated. You searched for `other` which we found as `@scoped/other` in 'undefined'"));
+  });
+
+  it('warns and matches unscoped name of scoped package when no exact match is found and with the addon name being unscoped', function() {
+    let addon = findAddonByName(addons, 'thing');
+    expect(addon.pkg.name).to.equal('@scope/thing');
+    td.verify(console.warn("The addon at `undefined` has a different name in its addon index.js ('thing') and its package.json ('@scope/thing')."));
   });
 
   it('if exact match is found, it "wins" over unscoped matches', function() {
