@@ -14,6 +14,15 @@ describe('findAddonByName', function() {
     }, {
       name: 'foo-bar',
       pkg: { name: 'foo-bar' },
+    }, {
+      name: '@scoped/foo-bar',
+      pkg: { name: '@scoped/foo-bar' },
+    }, {
+      name: 'thing',
+      pkg: { name: '@scope/thing' },
+    }, {
+      name: '@scoped/other',
+      pkg: { name: '@scoped/other' },
     }];
   });
 
@@ -45,5 +54,20 @@ describe('findAddonByName', function() {
   it('should not guess addon name from string with slashes', function() {
     let addon = findAddonByName(addons, 'qux/foo');
     expect(addon).to.equal(undefined, 'should not have found the foo addon');
+  });
+
+  it('matches scoped packages when names match exactly', function() {
+    let addon = findAddonByName(addons, '@scoped/other');
+    expect(addon.pkg.name).to.equal('@scoped/other');
+  });
+
+  it('matches unscoped name of scoped package when no exact match is found', function() {
+    let addon = findAddonByName(addons, 'other');
+    expect(addon.pkg.name).to.equal('@scoped/other');
+  });
+
+  it('if exact match is found, it "wins" over unscoped matches', function() {
+    let addon = findAddonByName(addons, 'foo-bar');
+    expect(addon.pkg.name).to.equal('foo-bar');
   });
 });
