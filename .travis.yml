@@ -15,6 +15,7 @@ branches:
     - release
     - auto
     - /^greenkeeper.*$/
+    - bisect
 
 cache:
   yarn: true
