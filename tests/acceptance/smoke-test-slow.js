@@ -77,6 +77,8 @@ describe('Acceptance: smoke-test', function() {
 
   it('ember test still runs when a JavaScript testem config exists', co.wrap(function *() {
     yield copyFixtureFiles('smoke-tests/js-testem-config');
+    console.log('**********\n\n', JSON.stringify(process.env, null, 2), '**************');
+    console.log('**********\n\nnode_modules/babel-plugin-debug-macros exists', fs.existsSync('node_modules/babel-plugin-debug-macros/src/index.js'), '**************');
     yield ember(['test']);
     expect(process.env._TESTEM_CONFIG_JS_RAN).to.be.ok;
   }));
