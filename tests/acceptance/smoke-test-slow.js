@@ -77,10 +77,13 @@ describe('Acceptance: smoke-test', function() {
 
   it('ember test still runs when a JavaScript testem config exists', co.wrap(function *() {
     yield copyFixtureFiles('smoke-tests/js-testem-config');
-    console.log('**********\n\n', JSON.stringify(process.env, null, 2), '**************');
-    console.log('**********\n\nnode_modules/babel-plugin-debug-macros exists', fs.existsSync('node_modules/babel-plugin-debug-macros/src/index.js'), '**************');
-    yield ember(['test']);
-    expect(process.env._TESTEM_CONFIG_JS_RAN).to.be.ok;
+    let result = yield runCommand(path.join('.', 'node_modules', 'ember-cli', 'bin', 'ember'), 'test');
+
+    let exitCode = result.code;
+    let output = result.output.join(EOL);
+
+    expect(exitCode).to.eql(0);
+    expect(output).to.include('***CUSTOM_TESTEM_JS**');
   }));
 
   // there is a bug in here when running the entire suite on Travis
